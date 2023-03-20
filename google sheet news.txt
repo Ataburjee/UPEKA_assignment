@@ -1,0 +1,50 @@
+// first method using function to the sheet
+
+
+// function myFunction() {
+//   var url = "https://newsapi.org/v2/top-headlines?country=us&apiKey=8f3c56e3568c48548cde786e0d687833";
+//     let response=UrlFetchApp.fetch(url);
+//     var data = JSON.parse(response.getContentText());
+//     var articles = data.articles.slice(0,5);
+//     console.log(articles);
+//     var headings = ["Title", "Author", "Description", "URL", "Image URL"];
+//     var rows = articles.map(function(ele) {
+//       return [ele.title, ele.author, ele.description, ele.url, ele.urlToImage];
+//     });
+
+//     rows.unshift(headings);
+//     // console.log(rows);
+//     return rows;
+    
+// }
+
+// Sceond method direct
+
+function updateSheetWithTopNews() {
+  var url = 'https://newsapi.org/v2/top-headlines?country=us&pageSize=5&apiKey=8f3c56e3568c48548cde786e0d687833';
+
+  // Fetch the top 5 news articles from News API
+  var response = UrlFetchApp.fetch(url);
+  var articles = JSON.parse(response.getContentText()).articles;
+  console.log(articles.length);
+  // Get the sheet where you want to update the news
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Sheet1');
+
+  // Clear the existing news on the sheet
+  sheet.getDataRange().offset(1, 0, sheet.getLastRow(), 5).clearContent();
+    sheet.getRange(1, 1).setValue('Title');
+    sheet.getRange(1, 2).setValue('Author');
+    sheet.getRange(1, 3).setValue('Description');
+    sheet.getRange(1, 4).setValue('URL');
+    sheet.getRange(1, 5).setValue('Image URL');
+  
+  // Loop through the articles and add them to the sheet
+  for (var i = 0; i < articles.length; i++) {
+    sheet.getRange(i + 2, 1).setValue(articles[i].title);
+    sheet.getRange(i + 2, 2).setValue(articles[i].author);
+    sheet.getRange(i + 2, 3).setValue(articles[i].description);
+    sheet.getRange(i + 2, 4).setValue(articles[i].url);
+    sheet.getRange(i + 2, 5).setValue(articles[i].urlToImage);
+  }
+
+}

@@ -1,0 +1,47 @@
+var apiKey="8f3c56e3568c48548cde786e0d687833";
+
+var url = 'https://newsapi.org/v2/top-headlines?country=us&pageSize=10&apiKey=8f3c56e3568c48548cde786e0d687833';
+
+var token = '5752521755:AAEVabxo8OG3vgY-cYMdhD-kbbDS60q5ThI';
+
+var telegrmURL = "https://api.telegram.org/bot" + token;
+
+function getMe(){
+  var surl = telegrmURL+"/getMe" ;
+  var response = UrlFetchApp.fetch(surl);
+  Logger.log(response.getContentText());
+}
+
+function getUpdates(){
+  var surl = telegrmURL + "/getUpdates";
+  var response = UrlFetchApp.fetch(surl);
+  Logger.log(response.getContentText());
+}
+
+
+function sendToTelegram(){
+  var url = 'https://newsapi.org/v2/top-headlines?country=us&pageSize=10&apiKey=8f3c56e3568c48548cde786e0d687833';
+  var response = UrlFetchApp.fetch(url);
+  var articles = JSON.parse(response.getContentText()).articles;
+  var token = "5752521755:AAEVabxo8OG3vgY-cYMdhD-kbbDS60q5ThI";
+  var chatId = "1595137602";
+  var url = telegrmURL + "/sendMessage";
+  var count = 1;
+  var i=0;
+  var text = articles.map(article => "News No: "+count++ +"\n"+"Heading: " + article.title+ "\n" + "Link: "+article.url + "\n" +"image :"+ article.urlToImage ).join("\n\n");
+
+ var payload = {
+    'chat_id': chatId,
+    'text': text,
+    "photo": articles[i++].urlToImage,
+    'parse_mode': 'HTML',
+    'disable_web_page_preview': true
+  };
+
+
+  var options = {
+    "method": "post",
+    "payload": payload
+  };
+  UrlFetchApp.fetch(url, options);
+}
